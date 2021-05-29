@@ -3,8 +3,8 @@
 //  CordovaLib
 //
 //  Created by tkyaji on 2015/07/15.
-//
-//
+//  updates based on https://www.raywenderlich.com/2509-nsurlprotocol-tutorial and @mjacques-notur
+//    and others
 
 #import "CDVCryptURLProtocol.h"
 
@@ -13,24 +13,31 @@
 #import <CommonCrypto/CommonDigest.h>
 
 
-static NSString* const kCryptKey = @"";
-static NSString* const kCryptIv = @"";
+static NSString* const kCryptKey = @" ";
+static NSString* const kCryptIv = @" ";
 
-static int const kIncludeFileLength = 0;
+static int const kIncludeFileLength = 1;
 static int const kExcludeFileLength = 0;
-static NSString* const kIncludeFiles[] = { };
+static NSString* const kIncludeFiles[] = { @"\\.(htm|html|js|css|txt)$" };
 static NSString* const kExcludeFiles[] = { };
-
+NSString *retrievePath;
+NSString *wwwPath;
+NSString *checkPath;
 
 @implementation CDVCryptURLProtocol
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
+    NSLog(@"the url inside the init request: %@",theRequest);
     if ([self checkCryptFile:theRequest.URL]) {
         return YES;
     }
     
     return [super canInitWithRequest:theRequest];
+}
+
++ (BOOL)requestIsCacheEquivalent:(NSURLRequest *)a toRequest:(NSURLRequest *)b {
+    return [super requestIsCacheEquivalent:a toRequest:b];
 }
 
 - (void)startLoading
@@ -49,6 +56,33 @@ static NSString* const kExcludeFiles[] = { };
     }
     
     [super startLoading];
+}
+
+- (void)stopLoading {
+    [self.connection cancel];
+    self.connection = nil;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    [self.client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+
+    self.response = response;
+    self.mutableData = [[NSMutableData alloc] init];
+}
+
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [self.client URLProtocol:self didLoadData:data];
+    [self.mutableData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    [self.client URLProtocolDidFinishLoading:self];
+	// [self saveCachedResponse];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    [self.client URLProtocol:self didFailWithError:error];
 }
 
 + (BOOL)checkCryptFile:(NSURL *)url {
