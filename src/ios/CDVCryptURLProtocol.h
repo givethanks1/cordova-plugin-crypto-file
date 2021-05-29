@@ -6,8 +6,19 @@
 //
 //
 
-#import <Cordova/CDVURLProtocol.h>
+// #import <Cordova/CDVURLProtocol.h>
 
-@interface CDVCryptURLProtocol : CDVURLProtocol
+// @interface CDVCryptURLProtocol : CDVURLProtocol
+
+// @end
+
+#import <Foundation/Foundation.h>
+
+@property (nonatomic, strong) NSMutableData *mutableData;
+@property (nonatomic, strong) NSURLResponse *response;
+
+@interface CDVCryptURLProtocol : NSURLProtocol
+
+// - (instancetype)initWithRequest:(NSURLRequest *)request cachedResponse:(NSCachedURLResponse *)cachedResponse client:(id<NSURLProtocolClient>)client;
 
 @end
