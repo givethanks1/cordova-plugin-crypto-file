@@ -3,14 +3,9 @@
 //  CordovaLib
 //
 //  Created by tkyaji on 2015/07/15.
+//  Update based on: https://www.raywenderlich.com/2509-nsurlprotocol-tutorial
 //
-//
 
-// #import <Cordova/CDVURLProtocol.h>
-
-// @interface CDVCryptURLProtocol : CDVURLProtocol
-
-// @end
 
 #import <Foundation/Foundation.h>
 
@@ -18,7 +13,5 @@
 @property (nonatomic, strong) NSURLResponse *response;
 
 @interface CDVCryptURLProtocol : NSURLProtocol
-
-// - (instancetype)initWithRequest:(NSURLRequest *)request cachedResponse:(NSCachedURLResponse *)cachedResponse client:(id<NSURLProtocolClient>)client;
 
 @end
