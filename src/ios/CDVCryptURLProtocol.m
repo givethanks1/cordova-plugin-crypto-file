@@ -46,17 +46,27 @@ NSString *checkPath;
 - (void)startLoading
 {
     NSURL* url = self.request.URL;
-    
-    if ([[self class] checkCryptFile:url]) {
-        NSString *mimeType = [self getMimeType:url];
-        
+
+    wwwPath = [[NSBundle mainBundle].resourcePath stringByAppendingString:@"/www"];
+    NSString *urling    = [@"file://"stringByAppendingString:wwwPath];
+    NSString *urlings   = [urling stringByAppendingString:checkPath];
+    NSString *finalUrl  = [urlings stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+
+    NSURL *urls = [[NSURL alloc] initWithString:finalUrl];
+    url         = urls;
+
+   // if ([[self class] checkCryptFile:url]) {
+        NSString *mimeType = [self getMimeType:url];        
         NSError* error;
         NSString* content = [[NSString alloc] initWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:&error];
         if (!error) {
-            NSData* data = [self decryptAES256WithKey:kCryptKey iv:kCryptIv data:content];
+            NSLog(@"Decrypt: %@",url);
+	    NSData* data = [self decryptAES256WithKey:kCryptKey iv:kCryptIv data:content];
             [self sendResponseWithResponseCode:200 data:data mimeType:mimeType];
-        }
-    }
+        } else {
+	    NSLog(@"The error while loading: %@",error);
+	}
+    //}
     
     [super startLoading];
 }
