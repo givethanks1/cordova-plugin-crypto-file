@@ -12,6 +12,9 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonDigest.h>
 
+@interface MyURLProtocol () <NSURLConnectionDelegate>
+@property (nonatomic, strong) NSURLConnection *connection;
+@end
 
 static NSString* const kCryptKey = @" ";
 static NSString* const kCryptIv = @" ";
