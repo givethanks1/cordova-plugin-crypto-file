@@ -54,18 +54,18 @@ NSString *checkPath;
 
     NSURL *urls = [[NSURL alloc] initWithString:finalUrl];
     url         = urls;
-
-   // if ([[self class] checkCryptFile:url]) {
-        NSString *mimeType = [self getMimeType:url];        
+    //if ([[self class] checkCryptFile:url]) {
+        NSString *mimeType = [self getMimeType:url];
+        
         NSError* error;
         NSString* content = [[NSString alloc] initWithContentsOfFile:url.path encoding:NSUTF8StringEncoding error:&error];
         if (!error) {
             NSLog(@"Decrypt: %@",url);
-	    NSData* data = [self decryptAES256WithKey:kCryptKey iv:kCryptIv data:content];
+            NSData* data = [self decryptAES256WithKey:kCryptKey iv:kCryptIv data:content];
             [self sendResponseWithResponseCode:200 data:data mimeType:mimeType];
         } else {
-	    NSLog(@"The error while loading: %@",error);
-	}
+	        NSLog(@"The error while loading: %@",error);
+	    }
     //}
     
     [super startLoading];
@@ -82,7 +82,6 @@ NSString *checkPath;
     self.response = response;
     self.mutableData = [[NSMutableData alloc] init];
 }
-
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     [self.client URLProtocol:self didLoadData:data];
@@ -222,6 +221,7 @@ NSString *checkPath;
 
 - (void)sendResponseWithResponseCode:(NSInteger)statusCode data:(NSData*)data mimeType:(NSString*)mimeType
 {
+    NSLog(@"inside response");
     if (mimeType == nil) {
         mimeType = @"text/plain";
     }
@@ -233,6 +233,12 @@ NSString *checkPath;
         [[self client] URLProtocol:self didLoadData:data];
     }
     [[self client] URLProtocolDidFinishLoading:self];
+}
+
++ (NSURLRequest*)canonicalRequestForRequest:(NSURLRequest*)request
+{
+    NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    return request;
 }
 
 @end
